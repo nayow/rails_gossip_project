@@ -8,6 +8,8 @@ Comment.destroy_all
 Gossip.destroy_all
 Tag.destroy_all
 JoinTableGossipTag.destroy_all
+CommentOfComment.destroy_all
+PrivateMessage.destroy_all
 
 # creating fake cities
 10.times do
@@ -46,21 +48,20 @@ end
   )
 end
 
-# Gossip.each do
-#   rand(1..Tag.count).times
-#     JoinTableGossipTag.create(
-#       gossip_id: rand(Gossip.first.id..Gossip.last.id)
-#       tag_id: rand(Tag.first.id..Tag.last.id)
-#     )
-#   end
-# end
-
-#creating fake jointablegossiptag
-20.times do
-  JoinTableGossipTag.create(
-    gossip_id: rand(Gossip.first.id..Gossip.last.id),
-    tag_id: rand(Tag.first.id..Tag.last.id)
-  )
+#creating fake gossips-tags
+for i in Gossip.first.id..Gossip.last.id do # applying tags to every gossip
+  tags_array = Array.new
+  for t in Tag.first.id..Tag.last.id do # initializing an array with all tag_ids
+    tags_array << t
+  end
+  rand(1..Tag.count).times do # at least one tag
+    random_tag_id = tags_array.uniq.sample # random and unique tag in the array
+    JoinTableGossipTag.create(
+      gossip_id: i,
+      tag_id: random_tag_id
+    )
+    tags_array.delete(random_tag_id) # one tag can't be used twice for the same gossip
+  end
 end
 
 # creating fake comments 
@@ -94,8 +95,7 @@ end
 
 # creating fake private messages
 10.times do 
-  pm = PrivateMessage.new
-  pm.content = Faker::Quote.famous_last_words
+  pm = PrivateMessage.new(content: Faker::Quote.famous_last_words)
   pm.sender_id = rand(User.first.id..User.last.id) # random sender amongst the previously created users
   pm.recipient_id = rand(User.first.id..User.last.id)
   until pm.recipient_id != pm.sender_id # random recipient has to be different than the sender
