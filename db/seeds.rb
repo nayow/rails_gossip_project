@@ -1,13 +1,6 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
-
 require 'faker'
 
+# resetting tables before creating everything
 City.destroy_all
 User.destroy_all
 Like.destroy_all
@@ -16,6 +9,7 @@ Gossip.destroy_all
 Tag.destroy_all
 JoinTableGossipTag.destroy_all
 
+# creating fake cities
 10.times do
   City.create(
     name: Faker::Address.city,
@@ -23,6 +17,7 @@ JoinTableGossipTag.destroy_all
   )
 end
 
+# creating fake users
 10.times do
   User.create(
     first_name: Faker::Name.first_name,
@@ -30,19 +25,21 @@ end
     description: Faker::Quote.most_interesting_man_in_the_world,
     email: Faker::Internet.email,
     age: rand(10..80),
-    city_id: rand(City.first.id..City.last.id)
+    city_id: rand(City.first.id..City.last.id) # random city amongst the previously created ones
   )
 end
 
+# creating fake gossips
 20.times do
   Gossip.create(
-    user_id: rand(User.first.id..User.last.id),
+    user_id: rand(User.first.id..User.last.id), # random gossip amongst the previously created ones
     title: Faker::Quote.singular_siegler,
     content: Faker::ChuckNorris.fact,
     date: Faker::Time.backward(days: 10)
   )
 end
 
+# creating fake tags
 10.times do
   Tag.create(
     title: '#'+Faker::Company.profession,
@@ -58,6 +55,7 @@ end
 #   end
 # end
 
+#creating fake jointablegossiptag
 20.times do
   JoinTableGossipTag.create(
     gossip_id: rand(Gossip.first.id..Gossip.last.id),
@@ -65,26 +63,28 @@ end
   )
 end
 
-
+# creating fake comments 
 20.times do
   Comment.create(
-    user_id: rand(User.first.id..User.last.id),
     content: Faker::Quote.famous_last_words,
-    gossip_id: rand(Gossip.first.id..Gossip.last.id)
+    user_id: rand(User.first.id..User.last.id), # random user amongst the previously created ones
+    gossip_id: rand(Gossip.first.id..Gossip.last.id) # random gossip amongst the previously created ones
   )
 end
 
-# 20.times do
-#   CommentOfComment.create(
-#     user_id: rand(User.first.id..User.last.id),
-#     content: Faker::Quote.yoda,
-#     comment_id: rand(Comment.first.id..Comment.last.id)
-#   )
-# end
+# creating comments of comments
+20.times do
+  CommentOfComment.create(
+    content: Faker::Quote.yoda,
+    user_id: rand(User.first.id..User.last.id), # random user amongst the previously created ones
+    comment_id: rand(Comment.first.id..Comment.last.id) # random comment amongst the previously created ones
+  )
+end
 
+# creatin fake like
 20.times do
   like = Like.new(user_id: rand(User.first.id..User.last.id))
-  if rand(0..1) == 1
+  if rand(0..1) == 1 # either gossip or comment
     like.gossip_id = rand(Gossip.first.id..Gossip.last.id)
   else
     like.comment_id = rand(Comment.first.id..Comment.last.id)

@@ -10,13 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_06_175534) do
+ActiveRecord::Schema.define(version: 2020_02_06_192119) do
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
     t.string "zip_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "comment_of_comments", force: :cascade do |t|
+    t.text "content"
+    t.integer "user_id"
+    t.integer "comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id"], name: "index_comment_of_comments_on_comment_id"
+    t.index ["user_id"], name: "index_comment_of_comments_on_user_id"
   end
 
   create_table "comments", force: :cascade do |t|
