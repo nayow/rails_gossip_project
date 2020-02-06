@@ -81,7 +81,7 @@ end
   )
 end
 
-# creatin fake like
+# creating fake likes
 20.times do
   like = Like.new(user_id: rand(User.first.id..User.last.id))
   if rand(0..1) == 1 # either gossip or comment
@@ -92,13 +92,17 @@ end
   like.save
 end
 
-# 10.times do 
-#   PrivateMessage.create!(
-#     content: Faker::Quote.famous_last_words,
-#     recipient_id: rand(User.first.id..User.last.id), 
-#     sender_id: rand(User.first.id..User.last.id)
-#     )
-# end 
+# creating fake private messages
+10.times do 
+  pm = PrivateMessage.new
+  pm.content = Faker::Quote.famous_last_words
+  pm.sender_id = rand(User.first.id..User.last.id) # random sender amongst the previously created users
+  pm.recipient_id = rand(User.first.id..User.last.id)
+  until pm.recipient_id != pm.sender_id # random recipient has to be different than the sender
+    pm.recipient_id = rand(User.first.id..User.last.id)
+  end
+  pm.save
+end 
 
 
 

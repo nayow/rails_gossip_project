@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_06_192119) do
+ActiveRecord::Schema.define(version: 2020_02_06_195732) do
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
@@ -73,6 +73,10 @@ ActiveRecord::Schema.define(version: 2020_02_06_192119) do
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "sender_id"
+    t.integer "recipient_id"
+    t.index ["recipient_id"], name: "index_private_messages_on_recipient_id"
+    t.index ["sender_id"], name: "index_private_messages_on_sender_id"
   end
 
   create_table "tags", force: :cascade do |t|
